@@ -34,7 +34,6 @@ public class Main {
 
     private static void task1() throws IOException {
         AtomicInteger index = new AtomicInteger(0);
-        AtomicInteger zooNumber = new AtomicInteger(1);
 
         List<Animal> animals = Util.getAnimals();
 
@@ -42,12 +41,11 @@ public class Main {
                 .filter(animal -> animal.getAge() >= 10 && animal.getAge() < 20)
                 .sorted(Comparator.comparing(Animal::getAge))
                 .collect(Collectors.groupingBy(animal -> index.getAndIncrement() / 7))
-                .values()
-                .forEach(zoo -> {
-                    System.out.println("Zoo #" + zooNumber.getAndIncrement() + " : " + zoo);
-                    if (zooNumber.get() == 3) {
+                .forEach((k, v) -> {
+                    if (k == 2) {
                         System.out.print("Director Pavel Grigoryev : ");
                     }
+                    System.out.println("Zoo #" + (k + 1) + " : " + v);
                 });
     }
 
