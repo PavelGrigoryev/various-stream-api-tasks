@@ -8,7 +8,10 @@ import by.grigoryev.model.Person;
 import by.grigoryev.util.Util;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -30,8 +33,22 @@ public class Main {
     }
 
     private static void task1() throws IOException {
+        AtomicInteger index = new AtomicInteger(0);
+        AtomicInteger zooNumber = new AtomicInteger(1);
+
         List<Animal> animals = Util.getAnimals();
-        //        animals.stream() Продолжить ...
+
+        animals.stream()
+                .filter(animal -> animal.getAge() >= 10 && animal.getAge() < 20)
+                .sorted(Comparator.comparing(Animal::getAge))
+                .collect(Collectors.groupingBy(animal -> index.getAndIncrement() / 7))
+                .values()
+                .forEach(zoo -> {
+                    System.out.println("Zoo #" + zooNumber.getAndIncrement() + " : " + zoo);
+                    if (zooNumber.get() == 3) {
+                        System.out.print("Director Pavel Grigoryev : ");
+                    }
+                });
     }
 
     private static void task2() throws IOException {
