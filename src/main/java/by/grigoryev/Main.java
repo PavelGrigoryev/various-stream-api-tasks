@@ -9,6 +9,7 @@ import by.grigoryev.util.Util;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.DoubleStream;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -98,7 +99,74 @@ public class Main {
 
     private static void task14() throws IOException {
         List<Car> cars = Util.getCars();
-        //        Продолжить...
+
+        List<Car> turkmenistan = cars.stream()
+                .filter(car -> car.getCarMake().equals("Jaguar") || car.getColor().equals("White"))
+                .toList();
+
+        cars.removeAll(turkmenistan);
+
+        List<Car> uzbekistan = cars.stream()
+                .filter(car -> car.getMass() < 1500)
+                .filter(car -> car.getCarMake().equals("BMW")
+                               || car.getCarMake().equals("Lexus")
+                               || car.getCarMake().equals("Chrysler")
+                               || car.getCarMake().equals("Toyota"))
+                .toList();
+
+        cars.removeAll(uzbekistan);
+
+        List<Car> kazakhstan = cars.stream()
+                .filter(car -> (car.getColor().equals("Black") && car.getMass() > 4000)
+                               || car.getCarMake().equals("GMC")
+                               || car.getCarMake().equals("Dodge"))
+                .toList();
+
+        cars.removeAll(kazakhstan);
+
+        List<Car> kyrgyzstan = cars.stream()
+                .filter(car -> car.getReleaseYear() < 1982
+                               || car.getCarModel().equals("Civic")
+                               || car.getCarModel().equals("Cherokee"))
+                .toList();
+
+        cars.removeAll(kyrgyzstan);
+
+        List<Car> russia = cars.stream()
+                .filter(car -> (!car.getColor().equals("Yellow")
+                                && !car.getColor().equals("Red")
+                                && !car.getColor().equals("Green")
+                                && !car.getColor().equals("Blue"))
+                               || car.getPrice() > 40_000)
+                .toList();
+
+        cars.removeAll(russia);
+
+        List<Car> mongolia = cars.stream()
+                .filter(car -> car.getVin().contains("59"))
+                .toList();
+
+        System.out.println("Total sum: " + String.format("%.2f", DoubleStream.of(
+                        transportationCosts(turkmenistan, "Turkmenistan: "),
+                        transportationCosts(uzbekistan, "Uzbekistan: "),
+                        transportationCosts(kazakhstan, "Kazakhstan: "),
+                        transportationCosts(kyrgyzstan, "Kyrgyzstan: "),
+                        transportationCosts(russia, "Russia: "),
+                        transportationCosts(mongolia, "Mongolia: ")
+                )
+                .sum()) + "$");
+    }
+
+    private static double transportationCosts(List<Car> turkmenistan, String country) {
+        return DoubleStream.of(
+                        turkmenistan.stream()
+                                .mapToDouble(Car::getMass)
+                                .sum()
+                )
+                .map(operand -> operand / 1000 * 7.14)
+                .peek(operand -> System.out.println(country + String.format("%.2f", operand) + "$"))
+                .findFirst()
+                .getAsDouble();
     }
 
     private static void task15() throws IOException {
