@@ -10,6 +10,8 @@ import by.grigoryev.util.Util;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 
@@ -108,9 +110,12 @@ public class Main {
         List<Flower> flowers = Util.getFlowers();
 
         double sum = flowers.stream()
-                .sorted(Comparator.comparing(Flower::getOrigin).reversed())
-                .sorted(Comparator.comparing(Flower::getPrice))
-                .sorted(Comparator.comparing(Flower::getWaterConsumptionPerDay).reversed())
+                .sorted(Comparator.comparing(Flower::getOrigin)
+                        .reversed()
+                        .thenComparing(Flower::getPrice)
+                        .thenComparing(Flower::getWaterConsumptionPerDay)
+                        .reversed()
+                )
                 .filter(flower -> String.valueOf(flower.getCommonName().charAt(0)).matches("[C-S]"))
                 .filter(flower -> flower.isShadePreferred()
                                   && (flower.getFlowerVaseMaterial().contains("Glass")
@@ -120,8 +125,12 @@ public class Main {
                 .mapToDouble(flower -> BigDecimal.valueOf(flower.getPrice())
                         .add(
                                 BigDecimal.valueOf(flower.getWaterConsumptionPerDay())
-                                        .multiply(BigDecimal.valueOf(365))
-                                        .multiply(BigDecimal.valueOf(5))
+                                        .multiply(BigDecimal.valueOf(
+                                                ChronoUnit.DAYS.between(
+                                                        LocalDate.now(),
+                                                        LocalDate.now().plusYears(5)
+                                                )
+                                        ))
                                         .divide(BigDecimal.valueOf(1000), 6, RoundingMode.HALF_UP)
                                         .multiply(BigDecimal.valueOf(1.39))
                         )
