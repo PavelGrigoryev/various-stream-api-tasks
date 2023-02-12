@@ -10,6 +10,7 @@ import by.grigoryev.util.Util;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
@@ -98,28 +99,31 @@ public class Main {
     private static void task13() throws IOException {
         List<House> houses = Util.getHouses();
 
+        List<Person> allPeople = new ArrayList<>(
+                houses.stream()
+                        .flatMap(house -> house.getPersonList().stream())
+                        .toList()
+        );
+
         List<Person> firsts = houses.stream()
                 .filter(house -> house.getBuildingType().equals("Hospital"))
                 .flatMap(house -> house.getPersonList().stream())
                 .toList();
 
-        List<Person> seconds = houses.stream()
-                .filter(house -> !house.getBuildingType().equals("Hospital"))
-                .flatMap(house -> house.getPersonList().stream()
-                        .filter(person -> ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) < 18
-                                          || (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 58
-                                              && person.getGender().equals("Female"))
-                                          || (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 63
-                                              && person.getGender().equals("Male"))))
+        allPeople.removeAll(firsts);
+
+        List<Person> seconds = allPeople.stream()
+                .filter(person -> ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) < 18
+                                  || (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 58
+                                      && person.getGender().equals("Female"))
+                                  || (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 63
+                                      && person.getGender().equals("Male")))
                 .toList();
 
-        List<Person> thirds = houses.stream()
-                .flatMap(house -> house.getPersonList().stream())
-                .toList();
+        allPeople.removeAll(seconds);
 
-        List<Person> evacuation = Stream.of(firsts, seconds, thirds)
+        List<Person> evacuation = Stream.of(firsts, seconds, allPeople)
                 .flatMap(Collection::stream)
-                .distinct()
                 .limit(500)
                 .toList();
 
