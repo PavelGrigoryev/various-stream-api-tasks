@@ -8,8 +8,11 @@ import by.grigoryev.model.Person;
 import by.grigoryev.util.Util;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
-import java.util.stream.DoubleStream;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -146,27 +149,32 @@ public class Main {
                 .filter(car -> car.getVin().contains("59"))
                 .toList();
 
-        System.out.println("Total sum: " + String.format("%.2f", DoubleStream.of(
-                        transportationCosts(turkmenistan, "Turkmenistan: "),
-                        transportationCosts(uzbekistan, "Uzbekistan: "),
-                        transportationCosts(kazakhstan, "Kazakhstan: "),
-                        transportationCosts(kyrgyzstan, "Kyrgyzstan: "),
-                        transportationCosts(russia, "Russia: "),
-                        transportationCosts(mongolia, "Mongolia: ")
-                )
-                .sum()) + "$");
-    }
+        AtomicInteger countryIndex = new AtomicInteger(1);
 
-    private static double transportationCosts(List<Car> turkmenistan, String country) {
-        return DoubleStream.of(
-                        turkmenistan.stream()
-                                .mapToDouble(Car::getMass)
-                                .sum()
+        double totalSum = Stream.of(
+                        turkmenistan,
+                        uzbekistan,
+                        kazakhstan,
+                        kyrgyzstan,
+                        russia,
+                        mongolia
                 )
-                .map(operand -> operand / 1000 * 7.14)
-                .peek(operand -> System.out.println(country + String.format("%.2f", operand) + "$"))
-                .findFirst()
-                .getAsDouble();
+                .map(echelon -> echelon.stream()
+                        .mapToDouble(Car::getMass)
+                        .sum()
+                )
+                .map(operand -> BigDecimal.valueOf(operand)
+                        .divide(BigDecimal.valueOf(1000), 4, RoundingMode.UP)
+                        .multiply(BigDecimal.valueOf(7.14)))
+                .peek(operand -> System.out.printf(
+                        "%s) %s$%n",
+                        countryIndex.getAndIncrement(),
+                        operand.setScale(2, RoundingMode.HALF_UP)
+                ))
+                .mapToDouble(BigDecimal::doubleValue)
+                .sum();
+
+        System.out.printf("Total sum : %s$", BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_UP));
     }
 
     private static void task15() throws IOException {
