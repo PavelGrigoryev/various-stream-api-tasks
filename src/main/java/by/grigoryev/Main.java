@@ -8,6 +8,9 @@ import by.grigoryev.model.Person;
 import by.grigoryev.util.Util;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Comparator;
 import java.util.List;
 
 public class Main {
@@ -103,6 +106,28 @@ public class Main {
 
     private static void task15() throws IOException {
         List<Flower> flowers = Util.getFlowers();
-        //        Продолжить...
+
+        double sum = flowers.stream()
+                .sorted(Comparator.comparing(Flower::getOrigin).reversed())
+                .sorted(Comparator.comparing(Flower::getPrice))
+                .sorted(Comparator.comparing(Flower::getWaterConsumptionPerDay).reversed())
+                .filter(flower -> String.valueOf(flower.getCommonName().charAt(0)).matches("[C-S]"))
+                .filter(flower -> flower.isShadePreferred()
+                                  && (flower.getFlowerVaseMaterial().contains("Glass")
+                                      || flower.getFlowerVaseMaterial().contains("Aluminium")
+                                      || flower.getFlowerVaseMaterial().contains("Steel"))
+                )
+                .mapToDouble(flower -> BigDecimal.valueOf(flower.getPrice())
+                        .add(
+                                BigDecimal.valueOf(flower.getWaterConsumptionPerDay())
+                                        .multiply(BigDecimal.valueOf(365))
+                                        .multiply(BigDecimal.valueOf(5))
+                                        .divide(BigDecimal.valueOf(1000), 6, RoundingMode.HALF_UP)
+                                        .multiply(BigDecimal.valueOf(1.39))
+                        )
+                        .doubleValue())
+                .sum();
+
+        System.out.printf("%.2f$", sum);
     }
 }
