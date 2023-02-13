@@ -10,6 +10,7 @@ import by.grigoryev.util.Util;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -37,16 +38,12 @@ public class Main {
 
         List<Animal> animals = Util.getAnimals();
 
-        animals.stream()
+        Map<Integer, List<Animal>> zoo = animals.stream()
                 .filter(animal -> animal.getAge() >= 10 && animal.getAge() < 20)
                 .sorted(Comparator.comparing(Animal::getAge))
-                .collect(Collectors.groupingBy(animal -> index.getAndIncrement() / 7))
-                .forEach((k, v) -> {
-                    if (k == 2) {
-                        System.out.print("Director Pavel Grigoryev : ");
-                    }
-                    System.out.println("Zoo #" + (k + 1) + " : " + v);
-                });
+                .collect(Collectors.groupingBy(animal -> index.getAndIncrement() / 7));
+
+        System.out.println("Director Pavel Grigoryev : " + zoo.get(2));
     }
 
     private static void task2() throws IOException {
