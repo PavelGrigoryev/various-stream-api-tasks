@@ -99,6 +99,7 @@ public class Main {
                 .sorted(Comparator.comparing(Person::getRecruitmentGroup))
                 .limit(200)
                 .forEach(System.out::println);
+
     }
 
     private static void task13() throws IOException {
