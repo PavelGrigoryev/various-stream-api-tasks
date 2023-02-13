@@ -8,6 +8,8 @@ import by.grigoryev.model.Person;
 import by.grigoryev.util.Util;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -146,7 +148,15 @@ public class Main {
 
     private static void task12() throws IOException {
         List<Person> people = Util.getPersons();
-//        Продолжить...
+
+        people.stream()
+                .filter(person -> person.getGender().equals("Male"))
+                .filter(person -> ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 18)
+                .filter(person -> ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) < 27)
+                .sorted(Comparator.comparing(Person::getRecruitmentGroup))
+                .limit(200)
+                .forEach(System.out::println);
+
     }
 
     private static void task13() throws IOException {
