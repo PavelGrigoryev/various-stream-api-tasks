@@ -8,6 +8,7 @@ import by.grigoryev.model.Person;
 import by.grigoryev.util.Util;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 
 public class Main {
@@ -27,6 +28,7 @@ public class Main {
         task13();
         task14();
         task15();
+        task16();
     }
 
     private static void task1() throws IOException {
@@ -105,4 +107,30 @@ public class Main {
         List<Flower> flowers = Util.getFlowers();
         //        Продолжить...
     }
+
+    private static void task16() throws IOException {
+        List<Car> cars = Util.getCars();
+
+        List<Car> filteredCars = cars.stream()
+                .filter(car -> car.getPrice() > 25_000 && car.getPrice() < 40_000)
+                .filter(car -> !car.getCarModel().equals("Eclipse"))
+                .filter(car -> !car.getVin().contains("666"))
+                .toList();
+
+        filteredCars.stream()
+                .filter(car -> car.getCarMake().equals("Suzuki"))
+                .max(Comparator.comparing(Car::getPrice))
+                .ifPresent(System.out::println);
+
+        filteredCars.stream()
+                .filter(car -> car.getCarMake().equals("Mitsubishi"))
+                .min(Comparator.comparing(Car::getReleaseYear))
+                .ifPresent(System.out::println);
+
+        filteredCars.stream()
+                .filter(car -> car.getCarMake().equals("Toyota"))
+                .max(Comparator.comparing(Car::getMass))
+                .ifPresent(System.out::println);
+    }
+
 }
