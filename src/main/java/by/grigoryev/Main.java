@@ -65,7 +65,7 @@ public class Main {
         List<Animal> animals = Util.getAnimals();
 
         boolean isNoneMatchOceania = animals.stream()
-                .noneMatch(animal -> animal.getOrigin().equals("Oceania"));
+                .noneMatch(animal -> "Oceania".equals(animal.getOrigin()));
 
         System.out.println(isNoneMatchOceania);
     }
