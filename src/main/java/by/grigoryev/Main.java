@@ -93,7 +93,7 @@ public class Main {
         List<Person> people = Util.getPersons();
 
         people.stream()
-                .filter(person -> person.getGender().equals("Male"))
+                .filter(person -> "Male".equals(person.getGender()))
                 .filter(person -> ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 18)
                 .filter(person -> ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) < 27)
                 .sorted(Comparator.comparing(Person::getRecruitmentGroup))
