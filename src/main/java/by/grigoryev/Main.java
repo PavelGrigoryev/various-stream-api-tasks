@@ -314,22 +314,22 @@ public class Main {
 
         List<Car> filteredCars = cars.stream()
                 .filter(car -> car.getPrice() > 25_000 && car.getPrice() < 40_000)
-                .filter(car -> !car.getCarModel().equals("Eclipse"))
-                .filter(car -> !car.getVin().contains("666"))
+                .filter(car -> !"Eclipse".equals(car.getCarModel()))
+                .filter(car -> !"666".equals(car.getVin()))
                 .toList();
 
         filteredCars.stream()
-                .filter(car -> car.getCarMake().equals("Suzuki"))
+                .filter(car -> "Suzuki".equals(car.getCarMake()))
                 .max(Comparator.comparing(Car::getPrice))
                 .ifPresent(System.out::println);
 
         filteredCars.stream()
-                .filter(car -> car.getCarMake().equals("Mitsubishi"))
+                .filter(car -> "Mitsubishi".equals(car.getCarMake()))
                 .min(Comparator.comparing(Car::getReleaseYear))
                 .ifPresent(System.out::println);
 
         filteredCars.stream()
-                .filter(car -> car.getCarMake().equals("Toyota"))
+                .filter(car -> "Toyota".equals(car.getCarMake()))
                 .max(Comparator.comparing(Car::getMass))
                 .ifPresent(System.out::println);
     }
