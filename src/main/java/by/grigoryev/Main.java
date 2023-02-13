@@ -38,8 +38,8 @@ public class Main {
         List<Animal> animals = Util.getAnimals();
 
         animals.stream()
-                .filter(animal -> animal.getOrigin().equals("Japanese"))
-                .map(animal -> animal.getGender().equals("Female")
+                .filter(animal -> "Japanese".equals(animal.getOrigin()))
+                .map(animal -> "Female".equals(animal.getGender())
                         ? animal.getBread().toUpperCase() : animal.getBread())
                 .forEach(System.out::println);
     }
