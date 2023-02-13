@@ -85,7 +85,7 @@ public class Main {
         List<Animal> animals = Util.getAnimals();
 
         animals.stream()
-                .filter(animal -> animal.getOrigin().equals("Indonesian"))
+                .filter(animal -> "Indonesian".equals(animal.getOrigin()))
                 .mapToInt(Animal::getAge)
                 .average()
                 .ifPresent(System.out::println);
