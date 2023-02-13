@@ -10,8 +10,11 @@ import by.grigoryev.util.Util;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -161,7 +164,36 @@ public class Main {
 
     private static void task13() throws IOException {
         List<House> houses = Util.getHouses();
-        //        Продолжить...
+
+        List<Person> allPeople = new ArrayList<>(
+                houses.stream()
+                        .flatMap(house -> house.getPersonList().stream())
+                        .toList()
+        );
+
+        List<Person> firsts = houses.stream()
+                .filter(house -> house.getBuildingType().equals("Hospital"))
+                .flatMap(house -> house.getPersonList().stream())
+                .toList();
+
+        allPeople.removeAll(firsts);
+
+        List<Person> seconds = allPeople.stream()
+                .filter(person -> ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) < 18
+                                  || (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 58
+                                      && person.getGender().equals("Female"))
+                                  || (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 63
+                                      && person.getGender().equals("Male")))
+                .toList();
+
+        allPeople.removeAll(seconds);
+
+        List<Person> evacuation = Stream.of(firsts, seconds, allPeople)
+                .flatMap(Collection::stream)
+                .limit(500)
+                .toList();
+
+        evacuation.forEach(System.out::println);
     }
 
     private static void task14() throws IOException {
