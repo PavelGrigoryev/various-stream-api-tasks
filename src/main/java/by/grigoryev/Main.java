@@ -13,6 +13,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Stream;
 import java.util.Map;
@@ -198,7 +200,79 @@ public class Main {
 
     private static void task14() throws IOException {
         List<Car> cars = Util.getCars();
-        //        Продолжить...
+
+        List<Car> turkmenistan = cars.stream()
+                .filter(car -> car.getCarMake().equals("Jaguar") || car.getColor().equals("White"))
+                .toList();
+
+        cars.removeAll(turkmenistan);
+
+        List<Car> uzbekistan = cars.stream()
+                .filter(car -> car.getMass() < 1500)
+                .filter(car -> car.getCarMake().equals("BMW")
+                               || car.getCarMake().equals("Lexus")
+                               || car.getCarMake().equals("Chrysler")
+                               || car.getCarMake().equals("Toyota"))
+                .toList();
+
+        cars.removeAll(uzbekistan);
+
+        List<Car> kazakhstan = cars.stream()
+                .filter(car -> (car.getColor().equals("Black") && car.getMass() > 4000)
+                               || car.getCarMake().equals("GMC")
+                               || car.getCarMake().equals("Dodge"))
+                .toList();
+
+        cars.removeAll(kazakhstan);
+
+        List<Car> kyrgyzstan = cars.stream()
+                .filter(car -> car.getReleaseYear() < 1982
+                               || car.getCarModel().equals("Civic")
+                               || car.getCarModel().equals("Cherokee"))
+                .toList();
+
+        cars.removeAll(kyrgyzstan);
+
+        List<Car> russia = cars.stream()
+                .filter(car -> (!car.getColor().equals("Yellow")
+                                && !car.getColor().equals("Red")
+                                && !car.getColor().equals("Green")
+                                && !car.getColor().equals("Blue"))
+                               || car.getPrice() > 40_000)
+                .toList();
+
+        cars.removeAll(russia);
+
+        List<Car> mongolia = cars.stream()
+                .filter(car -> car.getVin().contains("59"))
+                .toList();
+
+        AtomicInteger countryIndex = new AtomicInteger(1);
+
+        double totalSum = Stream.of(
+                        turkmenistan,
+                        uzbekistan,
+                        kazakhstan,
+                        kyrgyzstan,
+                        russia,
+                        mongolia
+                )
+                .map(echelon -> echelon.stream()
+                        .mapToDouble(Car::getMass)
+                        .sum()
+                )
+                .map(operand -> BigDecimal.valueOf(operand)
+                        .divide(BigDecimal.valueOf(1000), 4, RoundingMode.UP)
+                        .multiply(BigDecimal.valueOf(7.14)))
+                .peek(operand -> System.out.printf(
+                        "%s) %s$%n",
+                        countryIndex.getAndIncrement(),
+                        operand.setScale(2, RoundingMode.HALF_UP)
+                ))
+                .mapToDouble(BigDecimal::doubleValue)
+                .sum();
+
+        System.out.printf("Total sum : %s$", BigDecimal.valueOf(totalSum).setScale(2, RoundingMode.HALF_UP));
     }
 
     private static void task15() throws IOException {
