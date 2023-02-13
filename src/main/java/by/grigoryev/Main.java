@@ -98,7 +98,7 @@ public class Main {
         List<Animal> animals = Util.getAnimals();
 
         boolean isAllMatchMaleAndFemale = animals.stream()
-                .allMatch(animal -> animal.getGender().equals("Male") && animal.getGender().equals("Female"));
+                .allMatch(animal -> "Male".equals(animal.getGender()) && "Female".equals(animal.getGender()));
 
         System.out.println(isAllMatchMaleAndFemale);
     }
