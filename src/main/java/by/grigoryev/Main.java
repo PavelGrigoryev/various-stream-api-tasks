@@ -78,7 +78,7 @@ public class Main {
         List<Animal> animals = Util.getAnimals();
 
         long femaleCount = animals.stream()
-                .filter(animal -> animal.getGender().equals("Female"))
+                .filter(animal -> "Female".equals(animal.getGender()))
                 .count();
 
         System.out.println(femaleCount);
