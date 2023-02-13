@@ -97,7 +97,11 @@ public class Main {
 
     private static void task7() throws IOException {
         List<Animal> animals = Util.getAnimals();
-        //        animals.stream() Продолжить ...
+
+        boolean isNoneMatchOceania = animals.stream()
+                .noneMatch(animal -> animal.getOrigin().equals("Oceania"));
+
+        System.out.println(isNoneMatchOceania);
     }
 
     private static void task8() throws IOException {
