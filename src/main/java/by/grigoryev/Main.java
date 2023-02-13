@@ -277,6 +277,35 @@ public class Main {
 
     private static void task15() throws IOException {
         List<Flower> flowers = Util.getFlowers();
-        //        Продолжить...
+
+        double sum = flowers.stream()
+                .sorted(Comparator.comparing(Flower::getOrigin)
+                        .reversed()
+                        .thenComparing(Flower::getPrice)
+                        .thenComparing(Flower::getWaterConsumptionPerDay)
+                        .reversed()
+                )
+                .filter(flower -> String.valueOf(flower.getCommonName().charAt(0)).matches("[C-S]"))
+                .filter(flower -> flower.isShadePreferred()
+                                  && (flower.getFlowerVaseMaterial().contains("Glass")
+                                      || flower.getFlowerVaseMaterial().contains("Aluminium")
+                                      || flower.getFlowerVaseMaterial().contains("Steel"))
+                )
+                .mapToDouble(flower -> BigDecimal.valueOf(flower.getPrice())
+                        .add(
+                                BigDecimal.valueOf(flower.getWaterConsumptionPerDay())
+                                        .multiply(BigDecimal.valueOf(
+                                                ChronoUnit.DAYS.between(
+                                                        LocalDate.now(),
+                                                        LocalDate.now().plusYears(5)
+                                                )
+                                        ))
+                                        .divide(BigDecimal.valueOf(1000), 6, RoundingMode.HALF_UP)
+                                        .multiply(BigDecimal.valueOf(1.39))
+                        )
+                        .doubleValue())
+                .sum();
+
+        System.out.printf("%.2f$", sum);
     }
 }
