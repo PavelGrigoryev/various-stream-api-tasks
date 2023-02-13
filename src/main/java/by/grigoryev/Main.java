@@ -89,7 +89,7 @@ public class Main {
 
         boolean isHungarian = animals.stream()
                 .filter(animal -> animal.getAge() >= 20 && animal.getAge() <= 30)
-                .anyMatch(animal -> animal.getOrigin().equals("Hungarian"));
+                .anyMatch(animal -> "Hungarian".equals(animal.getOrigin()));
 
         System.out.println(isHungarian);
     }
