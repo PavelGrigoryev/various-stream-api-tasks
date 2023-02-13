@@ -174,7 +174,7 @@ public class Main {
         );
 
         List<Person> firsts = houses.stream()
-                .filter(house -> house.getBuildingType().equals("Hospital"))
+                .filter(house -> "Hospital".equals(house.getBuildingType()))
                 .flatMap(house -> house.getPersonList().stream())
                 .toList();
 
@@ -183,9 +183,9 @@ public class Main {
         List<Person> seconds = allPeople.stream()
                 .filter(person -> ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) < 18
                                   || (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 58
-                                      && person.getGender().equals("Female"))
+                                      && "Female".equals(person.getGender()))
                                   || (ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 63
-                                      && person.getGender().equals("Male")))
+                                      && "Male".equals(person.getGender())))
                 .toList();
 
         allPeople.removeAll(seconds);
