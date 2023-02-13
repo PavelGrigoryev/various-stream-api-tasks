@@ -104,42 +104,42 @@ public class Main {
         List<Car> cars = Util.getCars();
 
         List<Car> turkmenistan = cars.stream()
-                .filter(car -> car.getCarMake().equals("Jaguar") || car.getColor().equals("White"))
+                .filter(car -> "Jaguar".equals(car.getCarMake()) || "White".equals(car.getColor()))
                 .toList();
 
         cars.removeAll(turkmenistan);
 
         List<Car> uzbekistan = cars.stream()
                 .filter(car -> car.getMass() < 1500)
-                .filter(car -> car.getCarMake().equals("BMW")
-                               || car.getCarMake().equals("Lexus")
-                               || car.getCarMake().equals("Chrysler")
-                               || car.getCarMake().equals("Toyota"))
+                .filter(car -> "BMW".equals(car.getCarMake())
+                               || "Lexus".equals(car.getCarMake())
+                               || "Chrysler".equals(car.getCarMake())
+                               || "Toyota".equals(car.getCarMake()))
                 .toList();
 
         cars.removeAll(uzbekistan);
 
         List<Car> kazakhstan = cars.stream()
-                .filter(car -> (car.getColor().equals("Black") && car.getMass() > 4000)
-                               || car.getCarMake().equals("GMC")
-                               || car.getCarMake().equals("Dodge"))
+                .filter(car -> ("Black".equals(car.getColor()) && car.getMass() > 4000)
+                               || "GMC".equals(car.getCarMake())
+                               || "Dodge".equals(car.getCarMake()))
                 .toList();
 
         cars.removeAll(kazakhstan);
 
         List<Car> kyrgyzstan = cars.stream()
                 .filter(car -> car.getReleaseYear() < 1982
-                               || car.getCarModel().equals("Civic")
-                               || car.getCarModel().equals("Cherokee"))
+                               || "Civic".equals(car.getCarModel())
+                               || "Cherokee".equals(car.getCarModel()))
                 .toList();
 
         cars.removeAll(kyrgyzstan);
 
         List<Car> russia = cars.stream()
-                .filter(car -> (!car.getColor().equals("Yellow")
-                                && !car.getColor().equals("Red")
-                                && !car.getColor().equals("Green")
-                                && !car.getColor().equals("Blue"))
+                .filter(car -> (!"Yellow".equals(car.getColor())
+                                && !"Red".equals(car.getColor())
+                                && !"Green".equals(car.getColor())
+                                && !"Blue".equals(car.getColor()))
                                || car.getPrice() > 40_000)
                 .toList();
 
