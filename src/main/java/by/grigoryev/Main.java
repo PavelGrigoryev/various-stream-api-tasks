@@ -315,7 +315,7 @@ public class Main {
         List<Car> filteredCars = cars.stream()
                 .filter(car -> car.getPrice() > 25_000 && car.getPrice() < 40_000)
                 .filter(car -> !"Eclipse".equals(car.getCarModel()))
-                .filter(car -> !"666".equals(car.getVin()))
+                .filter(car -> !car.getVin().contains("666"))
                 .toList();
 
         filteredCars.stream()
