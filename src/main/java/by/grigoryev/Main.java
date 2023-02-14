@@ -8,8 +8,13 @@ import by.grigoryev.model.Person;
 import by.grigoryev.util.Util;
 
 import java.io.IOException;
-import java.util.Comparator;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -109,28 +114,53 @@ public class Main {
     }
 
     private static void task16() throws IOException {
-        List<Car> cars = Util.getCars();
+        List<Person> people = Util.getPersons();
+        String xml = """
+                    <person>
+                        <fullName>%s</fullName>
+                        <gender>%s</gender>
+                        <age>%d</age>
+                        <tax>%s</tax>
+                    </person>
+                """;
 
-        List<Car> filteredCars = cars.stream()
-                .filter(car -> car.getPrice() > 25_000 && car.getPrice() < 40_000)
-                .filter(car -> !"Eclipse".equals(car.getCarModel()))
-                .filter(car -> !car.getVin().contains("666"))
-                .toList();
+        Map<String, String> occupationTree = new TreeMap<>(
+                people.stream()
+                        .filter(person -> "Male".equals(person.getGender()) || "Female".equals(person.getGender()))
+                        .filter(person -> ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 18)
+                        .collect(Collectors.groupingBy(
+                                person -> """
+                                        <%s>
+                                        """.formatted(
+                                        person.getOccupation()
+                                                .replace(" ", "")
+                                                .replace("/", "")
+                                                .replace(person.getOccupation().charAt(0),
+                                                        Character.toLowerCase(person.getOccupation().charAt(0)))
+                                ),
+                                Collectors.mapping(
+                                        person -> xml.formatted(
+                                                person.getFirstName()
+                                                        .substring(0, 1)
+                                                        .concat(".")
+                                                        .concat(person.getLastName()),
+                                                person.getGender().toUpperCase(),
+                                                ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()),
+                                                BigDecimal.valueOf(
+                                                                ChronoUnit.MONTHS.between(
+                                                                        person.getDateOfBirth().plusYears(18),
+                                                                        LocalDate.now())
+                                                        )
+                                                        .multiply(BigDecimal.valueOf(5.45))
+                                                        .toString()
+                                                        .concat("$")
+                                        ),
+                                        Collectors.joining("")
+                                )
+                        ))
+        );
 
-        filteredCars.stream()
-                .filter(car -> "Suzuki".equals(car.getCarMake()))
-                .max(Comparator.comparing(Car::getPrice))
-                .ifPresent(System.out::println);
-
-        filteredCars.stream()
-                .filter(car -> "Mitsubishi".equals(car.getCarMake()))
-                .min(Comparator.comparing(Car::getReleaseYear))
-                .ifPresent(System.out::println);
-
-        filteredCars.stream()
-                .filter(car -> "Toyota".equals(car.getCarMake()))
-                .max(Comparator.comparing(Car::getMass))
-                .ifPresent(System.out::println);
+        occupationTree.forEach((k, v) -> System.out.println(k + v + new StringBuilder(k).insert(1, "/")));
     }
 
 }
