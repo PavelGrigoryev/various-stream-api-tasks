@@ -314,7 +314,7 @@ public class Main {
 
     private static void task16() throws IOException {
         List<Person> people = Util.getPersons();
-        String xml = """
+        String personXml = """
                     <person>
                         <fullName>%s</fullName>
                         <gender>%s</gender>
@@ -338,10 +338,9 @@ public class Main {
                                                 String.valueOf(person.getOccupation().charAt(0)),
                                                 String.valueOf(person.getOccupation().charAt(0)).toLowerCase()
                                         )
-
                         ),
                         Collectors.mapping(
-                                person -> xml.formatted(
+                                person -> personXml.formatted(
                                         person.getFirstName()
                                                 .substring(0, 1)
                                                 .concat(".")
@@ -368,9 +367,9 @@ public class Main {
 
         System.out.println(validXml);
 
-        Path absolutePath = Paths.get("src\\main\\resources\\taxes-for-binary.xml");
+        Path path = Paths.get("src\\main\\resources\\taxes-for-binary.xml");
         try {
-            Files.write(absolutePath, validXml.getBytes());
+            Files.write(path, validXml.getBytes());
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
