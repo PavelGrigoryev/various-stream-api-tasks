@@ -116,7 +116,7 @@ public class Main {
                         .thenComparing(Flower::getWaterConsumptionPerDay)
                         .reversed()
                 )
-                .filter(flower -> String.valueOf(flower.getCommonName().charAt(0)).matches("[C-S]"))
+                .filter(flower -> flower.getCommonName().matches("^[C-S].*"))
                 .filter(flower -> flower.isShadePreferred()
                                   && (flower.getFlowerVaseMaterial().contains("Glass")
                                       || flower.getFlowerVaseMaterial().contains("Aluminium")
