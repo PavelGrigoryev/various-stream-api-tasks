@@ -9,11 +9,13 @@ import by.grigoryev.util.Util;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -124,43 +126,57 @@ public class Main {
                     </person>
                 """;
 
-        Map<String, String> occupationTree = new TreeMap<>(
-                people.stream()
-                        .filter(person -> "Male".equals(person.getGender()) || "Female".equals(person.getGender()))
-                        .filter(person -> ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 18)
-                        .collect(Collectors.groupingBy(
-                                person -> """
-                                        <%s>
-                                        """.formatted(
-                                        person.getOccupation()
-                                                .replace(" ", "")
-                                                .replace("/", "")
-                                                .replace(person.getOccupation().charAt(0),
-                                                        Character.toLowerCase(person.getOccupation().charAt(0)))
-                                ),
-                                Collectors.mapping(
-                                        person -> xml.formatted(
-                                                person.getFirstName()
-                                                        .substring(0, 1)
-                                                        .concat(".")
-                                                        .concat(person.getLastName()),
-                                                person.getGender().toUpperCase(),
-                                                ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()),
-                                                BigDecimal.valueOf(
-                                                                ChronoUnit.MONTHS.between(
-                                                                        person.getDateOfBirth().plusYears(18),
-                                                                        LocalDate.now())
-                                                        )
-                                                        .multiply(BigDecimal.valueOf(5.45))
-                                                        .toString()
-                                                        .concat("$")
-                                        ),
-                                        Collectors.joining("")
-                                )
-                        ))
-        );
+        String validXml = people.stream()
+                .filter(person -> "Male".equals(person.getGender()) || "Female".equals(person.getGender()))
+                .filter(person -> ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()) >= 18)
+                .filter(person -> !person.getOccupation().startsWith("VP"))
+                .collect(Collectors.groupingBy(
+                        person -> """
+                                <%s>
+                                """.formatted(
+                                person.getOccupation()
+                                        .replace(" ", "")
+                                        .replace("/", "")
+                                        .replaceFirst(
+                                                String.valueOf(person.getOccupation().charAt(0)),
+                                                String.valueOf(person.getOccupation().charAt(0)).toLowerCase()
+                                        )
 
-        occupationTree.forEach((k, v) -> System.out.println(k + v + new StringBuilder(k).insert(1, "/")));
+                        ),
+                        Collectors.mapping(
+                                person -> xml.formatted(
+                                        person.getFirstName()
+                                                .substring(0, 1)
+                                                .concat(".")
+                                                .concat(person.getLastName()),
+                                        person.getGender().toUpperCase(),
+                                        ChronoUnit.YEARS.between(person.getDateOfBirth(), LocalDate.now()),
+                                        BigDecimal.valueOf(
+                                                        ChronoUnit.MONTHS.between(
+                                                                person.getDateOfBirth().plusYears(18),
+                                                                LocalDate.now())
+                                                )
+                                                .multiply(BigDecimal.valueOf(5.45))
+                                                .toString()
+                                                .concat("$")
+                                ),
+                                Collectors.joining("")
+                        )
+                ))
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> entry.getKey() + entry.getValue() + new StringBuilder(entry.getKey()).insert(1, "/"))
+                .collect(Collectors.joining("\n", "<taxesForBinary>\n", "</taxesForBinary>"));
+
+        System.out.println(validXml);
+
+        Path absolutePath = Paths.get("src\\main\\resources\\taxes-for-binary.xml");
+        try {
+            Files.write(absolutePath, validXml.getBytes());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 }
